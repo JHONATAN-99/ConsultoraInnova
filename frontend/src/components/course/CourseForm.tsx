@@ -1,21 +1,29 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
-import type { Curso } from '../../mockDb'
 
 type CourseFormProps = {
-  onCreate: (payload: {
+  onSubmit: (payload: {
+    id?: number
     nombre: string
     descripcion: string
     precio: number
     duracionSemanas: number
   }) => void
+  initialData?: {
+    id: number
+    nombre: string
+    descripcion: string
+    precio: number
+    duracionSemanas?: number
+  }
+  onCancel?: () => void
 }
 
-export function CourseForm({ onCreate }: CourseFormProps) {
+export function CourseForm({ onSubmit, initialData, onCancel }: CourseFormProps) {
   const [form, setForm] = useState({
-    nombre: '',
-    descripcion: '',
-    precio: '',
-    duracionSemanas: '',
+    nombre: initialData?.nombre ?? '',
+    descripcion: initialData?.descripcion ?? '',
+    precio: initialData?.precio.toString() ?? '',
+    duracionSemanas: initialData?.duracionSemanas?.toString() ?? '',
   })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -36,7 +44,8 @@ export function CourseForm({ onCreate }: CourseFormProps) {
       return
     }
 
-    onCreate({
+    onSubmit({
+      id: initialData?.id,
       nombre: form.nombre.trim(),
       descripcion: form.descripcion.trim(),
       precio: precioNumber,
@@ -49,11 +58,12 @@ export function CourseForm({ onCreate }: CourseFormProps) {
       precio: '',
       duracionSemanas: '',
     })
+    if (onCancel) onCancel()
   }
 
   return (
     <section className="panel">
-      <h2>Crear curso</h2>
+      <h2>{initialData ? 'Editar curso' : 'Crear curso'}</h2>
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-field">
@@ -116,7 +126,12 @@ export function CourseForm({ onCreate }: CourseFormProps) {
         </div>
 
         <div className="form-actions">
-          <button type="submit">Guardar curso</button>
+          <button type="submit">{initialData ? 'Actualizar curso' : 'Guardar curso'}</button>
+          {initialData && onCancel && (
+            <button type="button" onClick={onCancel} style={{ marginLeft: '0.5rem' }}>
+              Cancelar
+            </button>
+          )}
         </div>
       </form>
     </section>

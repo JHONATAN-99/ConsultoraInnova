@@ -2,9 +2,10 @@ import type { Curso } from '../../mockDb'
 
 type CourseListProps = {
   cursos: Curso[]
+  onEdit?: (curso: Curso) => void
 }
 
-export function CourseList({ cursos }: CourseListProps) {
+export function CourseList({ cursos, onEdit }: CourseListProps) {
   return (
     <section className="panel">
       <div className="panel-header">
@@ -26,6 +27,7 @@ export function CourseList({ cursos }: CourseListProps) {
               <th>Precio</th>
               <th>Duración (semanas)</th>
               <th>Descripción</th>
+              {onEdit && <th>Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -42,6 +44,13 @@ export function CourseList({ cursos }: CourseListProps) {
                   <td>{curso.precio.toFixed(2)}</td>
                   <td>{'duracionSemanas' in curso ? (curso as any).duracionSemanas : '-'}</td>
                   <td>{curso.descripcion}</td>
+                  {onEdit && (
+                    <td>
+                      <button type="button" onClick={() => onEdit(curso)}>
+                        Editar
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}

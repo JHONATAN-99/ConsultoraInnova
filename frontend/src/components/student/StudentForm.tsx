@@ -3,22 +3,32 @@ import type { Curso } from '../../mockDb'
 
 type StudentFormProps = {
   cursos: Curso[]
-  onCreate: (payload: {
+  onSubmit: (payload: {
+    id?: number
     nombre: string
     apellido: string
     email: string
     cursoId: number
     montoInicial: number
   }) => void
+  initialData?: {
+    id: number
+    nombre: string
+    apellido: string
+    email: string
+    cursoId: number
+    montoInicial: number
+  }
+  onCancel?: () => void
 }
 
-export function StudentForm({ cursos, onCreate }: StudentFormProps) {
+export function StudentForm({ cursos, onSubmit, initialData, onCancel }: StudentFormProps) {
   const [form, setForm] = useState({
-    nombre: '',
-    apellido: '',
-    email: '',
-    cursoId: cursos[0]?.id.toString() ?? '',
-    montoInicial: '',
+    nombre: initialData?.nombre ?? '',
+    apellido: initialData?.apellido ?? '',
+    email: initialData?.email ?? '',
+    cursoId: initialData?.cursoId.toString() ?? cursos[0]?.id.toString() ?? '',
+    montoInicial: initialData?.montoInicial.toString() ?? '',
   })
 
   // if cursos array is populated after mount, update selected cursoId
@@ -50,7 +60,8 @@ export function StudentForm({ cursos, onCreate }: StudentFormProps) {
       return
     }
 
-    onCreate({
+    onSubmit({
+      id: initialData?.id,
       nombre: form.nombre.trim(),
       apellido: form.apellido.trim(),
       email: form.email.trim(),
@@ -65,11 +76,12 @@ export function StudentForm({ cursos, onCreate }: StudentFormProps) {
       cursoId: cursos[0]?.id.toString() ?? '',
       montoInicial: '',
     })
+    if (onCancel) onCancel()
   }
 
   return (
     <section className="panel">
-      <h2>Registrar estudiante</h2>
+      <h2>{initialData ? 'Editar estudiante' : 'Registrar estudiante'}</h2>
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-field">
@@ -161,7 +173,14 @@ export function StudentForm({ cursos, onCreate }: StudentFormProps) {
         </div>
 
         <div className="form-actions">
-          <button type="submit">Guardar estudiante</button>
+          <button type="submit">
+            {initialData ? 'Actualizar estudiante' : 'Guardar estudiante'}
+          </button>
+          {initialData && onCancel && (
+            <button type="button" onClick={onCancel} style={{ marginLeft: '0.5rem' }}>
+              Cancelar
+            </button>
+          )}
         </div>
       </form>
     </section>

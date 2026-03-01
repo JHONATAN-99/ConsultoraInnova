@@ -14,6 +14,7 @@ model Curso {
   precio         Float
   duracionSemanas Int?
   estudiantes    Estudiante[]
+  solicitudes     Solicitud[]
 }
 
 model Estudiante {
@@ -25,3 +26,13 @@ model Estudiante {
   montoInicial Float
   curso        Curso    @relation(fields: [cursoId], references: [id])
 }
+
+model Solicitud {
+  id       Int    @id @default(autoincrement())
+  cursoId  Int
+  usuario  String
+  status   String
+
+  curso    Curso  @relation(fields: [cursoId], references: [id])
+}
+

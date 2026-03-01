@@ -12,3 +12,13 @@ export async function createEstudiante(req: Request, res: Response) {
   const nuevo = await prisma.estudiante.create({ data: payload })
   res.status(201).json(nuevo)
 }
+
+export async function updateEstudiante(req: Request, res: Response) {
+  const id = Number(req.params.id)
+  const payload: Partial<Omit<Estudiante, 'id'>> = req.body
+  const updated = await prisma.estudiante.update({
+    where: { id },
+    data: payload,
+  })
+  res.json(updated)
+}

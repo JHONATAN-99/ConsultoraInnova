@@ -1,13 +1,13 @@
 import { useState, type FormEvent } from 'react'
 
 type LoginPageProps = {
-  onLoginSuccess: () => void
+  onLoginSuccess: (role: 'admin' | 'user') => void
 }
 
-const MOCK_USER = {
-  username: 'admin',
-  password: '1234',
-}
+const MOCK_USERS = [
+  { username: 'admin', password: '1234', role: 'admin' as const },
+  { username: 'user', password: '1234', role: 'user' as const },
+]
 
 export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
   const [username, setUsername] = useState('')
@@ -17,13 +17,16 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
 
-    if (username === MOCK_USER.username && password === MOCK_USER.password) {
+    const found = MOCK_USERS.find(
+      (u) => u.username === username && u.password === password,
+    )
+    if (found) {
       setError('')
-      onLoginSuccess()
+      onLoginSuccess(found.role)
       return
     }
 
-    setError('Credenciales incorrectas. Prueba con admin / 1234.')
+    setError('Credenciales incorrectas. Prueba con admin / 1234 o user / 1234.')
   }
 
   return (
@@ -71,7 +74,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
         </form>
 
         <p className="login-hint">
-          <strong>Demo:</strong> usuario <code>admin</code> · contraseña <code>1234</code>
+          <strong>Demo:</strong> admin/1234 (administrador) o user/1234 (estudiante)
         </p>
       </div>
     </div>

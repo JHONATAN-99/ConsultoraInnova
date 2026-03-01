@@ -15,4 +15,11 @@ export type Estudiante = {
   montoInicial: number
 }
 
+export type Solicitud = {
+  id: number
+  cursoId: number
+  usuario: string
+  status: 'pending' | 'accepted' | 'rejected'
+}
+
 

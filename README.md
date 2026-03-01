@@ -1,6 +1,11 @@
 # React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The project is now split into two main folders:
+
+- `frontend/`: a React + Vite application written in TypeScript.
+- `backend/`: an Express/Prisma server (already present).
+
+The original template provided a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
 
@@ -76,7 +81,7 @@ export default defineConfig([
 
 ## Running the full stack 🛠️
 
-A simple Express-based backend has been added under `backend/` so that you can start both the server and the Vite frontend with one command.
+A simple Express-based backend lives under `backend/` while the frontend code resides inside `frontend/`, allowing clear separation between client and server.
 
 ### Arquitectura del backend
 
@@ -112,12 +117,11 @@ Esta separación facilita la extensión futura (middleware, servicios, autentica
 
 1. **Instala dependencias**
 
-   ```bash
-   # frontend
-   npm install
+   Ejecuta los scripts desde la raíz para tener ambos proyectos listos:
 
-   # backend (puedes usar el script desde la raíz)
-   npm run backend:install
+   ```bash
+   npm run frontend:install   # instala paquetes dentro de frontend/
+   npm run backend:install    # instala paquetes dentro de backend/
    ```
 
 2. **Configura la base de datos**
@@ -183,3 +187,34 @@ El resto del README permanece igual.
 
 Feel free to extend the API or adjust ports; the proxy settings are controlled by `vite.config.ts`.
 
+
+
+
+
+
+MIGRACION DE DATOS Y DB A LOCAL Y LEVANTAR EL PROYECTO LOS DOS EN UNO
+---
+
+## 🚀 Guía de Inicio Rápido
+
+Para poner en marcha el proyecto con la base de datos local, sigue estos pasos en orden:
+
+### 1. Configuración de Base de Datos (Prisma)
+
+Antes de lanzar la aplicación, debes sincronizar el modelo de datos con tu instancia local de PostgreSQL y cargar los datos iniciales.
+
+* **Instalar dependencias:** `npm run backend:install` (instala Prisma y otras herramientas necesarias).
+* **Crear tablas (Migración):** `npm run prisma:migrate` (lee tu `.env` y crea la estructura en Postgres).
+* **Cargar datos (Seed):** `npm run prisma:seed` (inserta los cursos y estudiantes de prueba).
+
+### 2. Ejecución del Proyecto
+
+Una vez que la base de datos esté lista, no necesitas abrir varias terminales. Usa el comando integrado que levanta el servidor y la interfaz al mismo tiempo.
+
+* **Levantar todo el Stack:** `npm run start`.
+
+> **Nota:** Este comando utiliza `concurrently` para ejecutar el **Backend** (puerto 3001) y el **Frontend** (puerto 5173) simultáneamente. El frontend está configurado con un proxy para redirigir las peticiones `/api` al servidor de forma transparente.
+
+---
+
+**¿Te gustaría que te ayude a redactar también la sección de "Requisitos Previos" para que el README quede totalmente profesional?**

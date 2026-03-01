@@ -5,9 +5,10 @@ type StudentListProps = {
   cursos: Curso[]
   busqueda: string
   onBusquedaChange: (value: string) => void
+  onEdit?: (estudiante: Estudiante) => void
 }
 
-export function StudentList({ estudiantes, cursos, busqueda, onBusquedaChange }: StudentListProps) {
+export function StudentList({ estudiantes, cursos, busqueda, onBusquedaChange, onEdit }: StudentListProps) {
   const estudiantesFiltrados = estudiantes.filter((e) => {
     if (!busqueda.trim()) return true
     const texto = busqueda.toLowerCase()
@@ -56,12 +57,13 @@ export function StudentList({ estudiantes, cursos, busqueda, onBusquedaChange }:
               <th>Precio curso</th>
               <th>Monto inicial</th>
               <th>Restante</th>
+              {onEdit && <th>Acciones</th>}
             </tr>
           </thead>
           <tbody>
             {estudiantesFiltrados.length === 0 ? (
               <tr>
-                <td colSpan={8} className="table-empty">
+                <td colSpan={onEdit ? 8 : 7} className="table-empty">
                   No hay estudiantes para mostrar.
                 </td>
               </tr>
@@ -79,6 +81,13 @@ export function StudentList({ estudiantes, cursos, busqueda, onBusquedaChange }:
                     <td>{precio.toFixed(2)}</td>
                     <td>{estudiante.montoInicial.toFixed(2)}</td>
                     <td>{restante.toFixed(2)}</td>
+                    {onEdit && (
+                      <td>
+                        <button type="button" onClick={() => onEdit(estudiante)}>
+                          Editar
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 )
               })
