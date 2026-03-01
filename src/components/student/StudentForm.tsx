@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react'
 import type { Curso } from '../../mockDb'
 
 type StudentFormProps = {
@@ -20,6 +20,13 @@ export function StudentForm({ cursos, onCreate }: StudentFormProps) {
     cursoId: cursos[0]?.id.toString() ?? '',
     montoInicial: '',
   })
+
+  // if cursos array is populated after mount, update selected cursoId
+  useEffect(() => {
+    if (cursos.length && !form.cursoId) {
+      setForm((prev) => ({ ...prev, cursoId: cursos[0].id.toString() }))
+    }
+  }, [cursos, form.cursoId])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target

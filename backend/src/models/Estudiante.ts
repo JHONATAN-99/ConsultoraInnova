@@ -1,11 +1,3 @@
-export type Curso = {
-  id: number
-  nombre: string
-  descripcion: string
-  precio: number
-  duracionSemanas?: number
-}
-
 export type Estudiante = {
   id: number
   nombre: string
@@ -14,5 +6,3 @@ export type Estudiante = {
   cursoId: number
   montoInicial: number
 }
-
-

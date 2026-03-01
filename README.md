@@ -71,3 +71,115 @@ export default defineConfig([
   },
 ])
 ```
+
+---
+
+## Running the full stack 🛠️
+
+A simple Express-based backend has been added under `backend/` so that you can start both the server and the Vite frontend with one command.
+
+### Arquitectura del backend
+
+La aplicación del servidor ahora sigue una estructura modular típica para un proyecto de consultoría de cursos:
+
+```
+backend/
+  src/
+    controllers/          # lógica de cada entidad (cursos, estudiantes)
+      cursosController.ts
+      estudiantesController.ts
+    routes/               # definición de rutas con routers de Express
+      cursos.ts
+      estudiantes.ts
+      index.ts            # enrutador raíz montado en /api
+    models/               # tipos e interfaces TS para datos
+      Curso.ts
+      Estudiante.ts
+    db.ts                 # almacenamiento en memoria (simula una base de datos)
+    index.ts              # entrypoint que configura express y monta las rutas
+  tsconfig.json
+  package.json
+```
+
+- **Modelos** contienen únicamente los tipos `Curso`/`Estudiante`.
+- **Controladores** reciben `Request`/`Response` y usan `db.ts` para leer/escribir.
+- **Rutas** vinculan endpoints HTTP a los controladores mediante `Router`.
+- `db.ts` proporciona arrays persistentes en memoria; reemplázalo más adelante por una base de datos real si lo deseas.
+
+Esta separación facilita la extensión futura (middleware, servicios, autenticación, etc.) y establece una base profesional para la consultoría.
+
+### Pasos para ponerlo en marcha
+
+1. **Instala dependencias**
+
+   ```bash
+   # frontend
+   npm install
+
+   # backend (puedes usar el script desde la raíz)
+   npm run backend:install
+   ```
+
+2. **Configura la base de datos**
+
+   El servidor usa [Prisma](https://www.prisma.io/) y puede conectarse a PostgreSQL o MySQL (u otro proveedor
+   soportado).
+
+   - Crea una base de datos en tu servidor local o en la nube.
+   - Define la variable de entorno `DATABASE_URL` apuntando a ella. Ejemplos:
+
+     ```bash
+     # PostgreSQL
+     export DATABASE_URL="postgresql://user:password@localhost:5432/consultora"
+     # MySQL
+     export DATABASE_URL="mysql://user:password@localhost:3306/consultora"
+     ```
+
+3. **Ejecuta las migraciones y el seed**
+
+   Desde `backend/` (o usando el script raíz) corre:
+
+   ```bash
+   npm run prisma:migrate    # crea las tablas según schema.prisma
+   npm run prisma:generate   # genera el cliente de Prisma
+   npm run prisma:seed       # inserta cursos iniciales en la BD
+   ```
+
+   El último comando copiará los datos que antes estaban en memoria a tu nueva base.
+
+4. **Arranca ambos servicios**
+
+   ```bash
+   npm run start
+   ```
+
+   Esto ejecuta simultáneamente el servidor en `http://localhost:3001` y Vite en 5173 con proxy `/api`.
+
+---
+
+El resto del README se mantiene sin cambios.
+
+   Esto ejecuta simultáneamente el servidor en `http://localhost:3001` y Vite en 5173 con proxy `/api`.
+
+3. **Desarrollo**
+
+   - Frontend: modifica `src/` y disfruta del HMR de Vite.
+   - Backend: edita `backend/src/*`; el servidor se reinicia automáticamente gracias a `ts-node-dev`.
+
+---
+
+El resto del README permanece igual.
+
+   ```bash
+   npm run start
+   ```
+
+   This script uses [`concurrently`](https://www.npmjs.com/package/concurrently) to launch the backend on `http://localhost:3001` and the Vite frontend (default port 5173) simultaneously.  The frontend is configured to proxy `/api` requests transparently to the server.
+
+3. **Development workflow**
+
+   - Edit React components under `src/`; HMR will refresh the browser automatically.
+   - Backend code lives in `backend/src/`; it runs with `ts-node-dev` so changes restart the server.
+
+Feel free to extend the API or adjust ports; the proxy settings are controlled by `vite.config.ts`.
+
