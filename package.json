@@ -14,7 +14,7 @@
     "start": "concurrently \"npm run backend:start\" \"npm run frontend:dev\""
   },
   "dependencies": {
-    "concurrently": "^8.2.0"
-  },
-  "devDependencies": {}
+    "concurrently": "^8.2.0",
+    "cookie-parser": "^1.4.7"
+  }
 }
