@@ -19,6 +19,7 @@ type AdminAppProps = {
   onUpdateSolicitud: (id: number, status: string) => void
   onLogout: () => void
   userRole: string
+  userEmail?: string
 }
 
 export default function AdminApp({
@@ -31,6 +32,8 @@ export default function AdminApp({
   onUpdateEstudiante,
   onUpdateSolicitud,
   onLogout,
+  userRole,
+  userEmail,
 }: AdminAppProps) {
   const [activeTab, setActiveTab] = useState<'cursos' | 'estudiantes' | 'solicitudes'>('cursos')
   const [editingCurso, setEditingCurso] = useState<Curso | null>(null)
@@ -60,7 +63,12 @@ export default function AdminApp({
 
   return (
     <div className="layout">
-      <Navbar title="Panel de administración" onLogout={onLogout} />
+      <Navbar
+        title="Panel de administración"
+        userRole={userRole}
+        userEmail={userEmail}
+        onLogout={onLogout}
+      />
       <Sidebar
         items={[
           { key: 'cursos', label: 'Cursos' },

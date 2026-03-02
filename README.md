@@ -146,10 +146,15 @@ Esta separación facilita la extensión futura (middleware, servicios, autentica
    ```bash
    npm run prisma:migrate    # crea las tablas según schema.prisma
    npm run prisma:generate   # genera el cliente de Prisma
-   npm run prisma:seed       # inserta cursos iniciales en la BD
+   npm run prisma:seed       # inserta cursos y usuarios iniciales en la BD
    ```
 
-   El último comando copiará los datos que antes estaban en memoria a tu nueva base.
+   El seed script ahora también crea usuarios de demostración (`admin@demo.com` y
+   `user@demo.com`) con contraseñas hasheadas. Si vuelves a ejecutarlo después de
+   editar usuarios, borra primero las filas existentes o usa un nuevo `prisma` reset.
+
+   > **Nota:** la funcionalidad de registro crea el hash automáticamente, por lo
+   que no almacenes contraseñas en texto plano.
 
 4. **Arranca ambos servicios**
 
@@ -160,6 +165,24 @@ Esta separación facilita la extensión futura (middleware, servicios, autentica
    Esto ejecuta simultáneamente el servidor en `http://localhost:3001` y Vite en 5173 con proxy `/api`.
 
 ---
+
+## Autenticación
+
+La aplicación ahora soporta registro e inicio de sesión **con correo y contraseña**.
+Los usuarios pueden elegir un **rol** (`admin` o `user`) al registrarse y la
+información se mantiene en cookies (`role` y `email`) para poder refrescar la
+página sin perder el estado.
+
+- El backend expone `/api/auth/register` y `/api/auth/login`.
+- Al crear un usuario la contraseña se hashea con `bcrypt` (y durante el seed
+  también se utiliza hashing). Nunca guardes contraseñas en texto plano.
+- El frontend muestra el formulario de registro junto al de login; elige el rol
+  y el correo que quieras probar.
+- Haz click en "Cerrar sesión" para eliminar las cookies y volver a la pantalla
+  de autenticación.
+
+Recuerda ejecutar `npm install` en el directorio `backend/` después de agregar
+la dependencia `bcrypt`.
 
 El resto del README se mantiene sin cambios.
 
@@ -202,6 +225,8 @@ Para poner en marcha el proyecto con la base de datos local, sigue estos pasos e
 ### 1. Configuración de Base de Datos (Prisma)
 
 Antes de lanzar la aplicación, debes sincronizar el modelo de datos con tu instancia local de PostgreSQL y cargar los datos iniciales.
+
+La base ahora también incluye usuarios (`User`): puedes registrarte desde el front-end o usar las cuentas de demostración generadas por el seed (`admin@demo.com` / `1234` y `user@demo.com` / `1234`).
 
 * **Instalar dependencias:** `npm run backend:install` (instala Prisma y otras herramientas necesarias).
 * **Crear tablas (Migración):** `npm run prisma:migrate` (lee tu `.env` y crea la estructura en Postgres).

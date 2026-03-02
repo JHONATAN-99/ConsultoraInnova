@@ -10,6 +10,7 @@ type UserAppProps = {
   onLogout: () => void
   user: { username: string }
   userRole: string
+  userEmail?: string
 }
 
 export default function UserApp({
@@ -18,6 +19,8 @@ export default function UserApp({
   onCreateSolicitud,
   onLogout,
   user,
+  userRole,
+  userEmail,
 }: UserAppProps) {
   const [activeTab, setActiveTab] = useState<'cursos' | 'misSolicitudes'>('cursos')
 
@@ -32,7 +35,12 @@ export default function UserApp({
 
   return (
     <div className="layout">
-      <Navbar title="Panel de usuario" userRole="estudiante" onLogout={onLogout} />
+      <Navbar
+        title="Panel de usuario"
+        userRole={userRole}
+        userEmail={userEmail}
+        onLogout={onLogout}
+      />
       <Sidebar
         items={[
           { key: 'cursos', label: 'Cursos' },

@@ -9,12 +9,24 @@ export type Role = 'admin' | 'user'
 
 function App() {
   const [userRole, setUserRole] = useState<Role | null>(null)
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+
+  const getCookie = (name: string): string | null => {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+    return match ? match[2] : null
+  }
   const [cursos, setCursos] = useState<Curso[]>([])
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([])
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([])
 
-  // load initial data from backend
+  // load initial data from backend and check auth cookie
   useEffect(() => {
+    const savedRole = getCookie('role') as Role | null
+    const savedEmail = getCookie('email')
+    if (savedRole === 'admin' || savedRole === 'user') {
+      setUserRole(savedRole)
+      setUserEmail(savedEmail)
+    }
     fetch('/api/cursos')
       .then((r) => r.json())
       .then(setCursos)
@@ -101,7 +113,14 @@ function App() {
   }
 
   if (!userRole) {
-    return <LoginPage onLoginSuccess={(role) => setUserRole(role)} />
+    return (
+      <LoginPage
+        onLoginSuccess={(role, email) => {
+          setUserRole(role)
+          setUserEmail(email)
+        }}
+      />
+    )
   }
 
   const commonProps = {
@@ -114,14 +133,20 @@ function App() {
     onUpdateEstudiante: handleUpdateEstudiante,
     onCreateSolicitud: handleCreateSolicitud,
     onUpdateSolicitud: handleUpdateSolicitud,
-    onLogout: () => setUserRole(null),
+    onLogout: () => {
+      document.cookie = 'role=; Max-Age=0; path=/';
+      document.cookie = 'email=; Max-Age=0; path=/';
+      setUserRole(null)
+      setUserEmail(null)
+    },
     userRole,
+    userEmail,
   }
 
   return userRole === 'admin' ? (
-    <AdminApp {...commonProps} />
+    <AdminApp {...commonProps} userEmail={userEmail ?? undefined} />
   ) : (
-    <UserApp {...commonProps} user={{ username: 'user' }} />
+    <UserApp {...commonProps} user={{ username: userEmail ?? 'user' }} userEmail={userEmail ?? undefined} />
   )
 }
 
