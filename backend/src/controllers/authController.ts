@@ -7,7 +7,7 @@ export async function register(req: Request, res: Response) {
   const { email, password, role } = req.body as {
     email: string
     password: string
-    role: string
+    role: 'admin' | 'user' | 'gerente'
   }
 
   if (!email || !password || !role) {

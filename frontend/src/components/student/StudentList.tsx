@@ -6,6 +6,7 @@ type StudentListProps = {
   busqueda: string
   onBusquedaChange: (value: string) => void
   onEdit?: (estudiante: Estudiante) => void
+  onDelete?: (estudiante: Estudiante) => void
 }
 
 export function StudentList({ estudiantes, cursos, busqueda, onBusquedaChange, onEdit }: StudentListProps) {
@@ -86,6 +87,15 @@ export function StudentList({ estudiantes, cursos, busqueda, onBusquedaChange, o
                         <button type="button" onClick={() => onEdit(estudiante)}>
                           Editar
                         </button>
+                        {onDelete && (
+                          <button
+                            type="button"
+                            style={{ marginLeft: '0.5rem' }}
+                            onClick={() => onDelete(estudiante)}
+                          >
+                            Eliminar
+                          </button>
+                        )}
                       </td>
                     )}
                   </tr>

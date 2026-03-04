@@ -169,9 +169,18 @@ Esta separación facilita la extensión futura (middleware, servicios, autentica
 ## Autenticación
 
 La aplicación ahora soporta registro e inicio de sesión **con correo y contraseña**.
-Los usuarios pueden elegir un **rol** (`admin` o `user`) al registrarse y la
+Los usuarios pueden elegir un **rol** (`admin`, `user` o `gerente`) al registrarse y la
 información se mantiene en cookies (`role` y `email`) para poder refrescar la
 página sin perder el estado.
+
+- **admin** puede crear y actualizar cursos/estudiantes, y asignar alumnos a
+  cursos.
+- **gerente** tiene acceso completo: crea, actualiza y elimina cursos,
+  estudiantes, solicitudes y también puede gestionar áreas.
+- **user** es el estudiante que solo puede enviar solicitudes de inscripción.
+
+Además, los cursos se organizan por **áreas**; cada curso pertenece opcionalmente
+una área y en el frontend se muestran agrupados.
 
 - El backend expone `/api/auth/register` y `/api/auth/login`.
 - Al crear un usuario la contraseña se hashea con `bcrypt` (y durante el seed

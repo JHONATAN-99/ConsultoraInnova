@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import type { Curso, Estudiante, Solicitud } from '../mockDb'
+import type { Curso, Estudiante, Solicitud, Area } from '../mockDb'
 import { Navbar } from '../components/layout/Navbar'
 import { Sidebar } from '../components/layout/Sidebar'
 import { CourseForm } from '../components/course/CourseForm'
 import { CourseList } from '../components/course/CourseList'
+import { AreaForm } from '../components/course/AreaForm'
+import { AreaList } from '../components/course/AreaList'
 import { StudentForm } from '../components/student/StudentForm'
 import { StudentList } from '../components/student/StudentList'
 
@@ -11,12 +13,17 @@ type AdminAppProps = {
   cursos: Curso[]
   estudiantes: Estudiante[]
   solicitudes: Solicitud[]
+  areas: Area[]
   onCreateCurso: (payload: Omit<Curso, 'id'>) => void
   onUpdateCurso: (id: number, payload: Partial<Curso>) => void
+  onDeleteCurso?: (id: number) => void
   onCreateEstudiante: (payload: Omit<Estudiante, 'id'>) => void
   onUpdateEstudiante: (id: number, payload: Partial<Estudiante>) => void
+  onDeleteEstudiante?: (id: number) => void
   onCreateSolicitud: (payload: Omit<Solicitud, 'id'>) => void
   onUpdateSolicitud: (id: number, status: string) => void
+  onCreateArea?: (payload: Omit<Area, 'id'>) => void
+  onDeleteArea?: (id: number) => void
   onLogout: () => void
   userRole: string
   userEmail?: string
@@ -26,20 +33,32 @@ export default function AdminApp({
   cursos,
   estudiantes,
   solicitudes,
+  areas,
   onCreateCurso,
   onUpdateCurso,
+  onDeleteCurso,
   onCreateEstudiante,
   onUpdateEstudiante,
+  onDeleteEstudiante,
+  onCreateSolicitud,
   onUpdateSolicitud,
+  onCreateArea,
+  onDeleteArea,
   onLogout,
   userRole,
   userEmail,
 }: AdminAppProps) {
-  const [activeTab, setActiveTab] = useState<'cursos' | 'estudiantes' | 'solicitudes'>('cursos')
+  const isGerente = userRole === 'gerente'
+  const isAdmin = userRole === 'admin'
+
+  const [activeTab, setActiveTab] = useState<'cursos' | 'estudiantes' | 'solicitudes'>(
+    isGerente ? 'cursos' : 'estudiantes'
+  )
   const [editingCurso, setEditingCurso] = useState<Curso | null>(null)
   const [editingStudent, setEditingStudent] = useState<Estudiante | null>(null)
 
   const handleCourseSubmit = (data: Omit<Curso, 'id'> & { id?: number }) => {
+    if (!isGerente) return // admins may not submit
     if (data.id != null) {
       onUpdateCurso(data.id, data)
       setEditingCurso(null)
@@ -51,7 +70,9 @@ export default function AdminApp({
   const handleStudentSubmit = (
     data: Omit<Estudiante, 'id'> & { id?: number },
   ) => {
+    // both admin and gerente can create; only gerente can update
     if (data.id != null) {
+      if (!isGerente) return
       onUpdateEstudiante(data.id, data)
       setEditingStudent(null)
     } else {
@@ -70,11 +91,18 @@ export default function AdminApp({
         onLogout={onLogout}
       />
       <Sidebar
-        items={[
-          { key: 'cursos', label: 'Cursos' },
-          { key: 'estudiantes', label: 'Estudiantes' },
-          { key: 'solicitudes', label: 'Solicitudes' },
-        ]}
+        items={
+          isGerente
+            ? [
+                { key: 'cursos', label: 'Cursos' },
+                { key: 'estudiantes', label: 'Estudiantes' },
+                { key: 'solicitudes', label: 'Solicitudes' },
+              ]
+            : [
+                { key: 'cursos', label: 'Cursos' },
+                { key: 'estudiantes', label: 'Estudiantes' },
+              ]
+        }
         activeKey={activeTab}
         onSelect={(key: string) => setActiveTab(key as any)}
       />
@@ -82,15 +110,70 @@ export default function AdminApp({
       <main className="main-content">
         {activeTab === 'cursos' && (
           <>
-            <CourseForm
-              onSubmit={handleCourseSubmit}
-              initialData={editingCurso ?? undefined}
-              onCancel={() => setEditingCurso(null)}
-            />
-            <CourseList
-              cursos={cursos}
-              onEdit={(c) => setEditingCurso(c)}
-            />
+            {isGerente ? (
+              <>
+                <section className="panel">
+                  <h3>Áreas</h3>
+                  <AreaForm onSubmit={onCreateArea!} />
+                  <AreaList
+                    areas={areas}
+                    cursos={cursos}
+                    onDelete={onDeleteArea}
+                  />
+                </section>
+
+                <CourseForm
+                  onSubmit={handleCourseSubmit}
+                  initialData={editingCurso ?? undefined}
+                  onCancel={() => setEditingCurso(null)}
+                  areas={areas}
+                />
+                {areas.length > 0 ? (
+                  <>
+                    {areas.map((area) => (
+                      <div key={area.id} style={{ marginTop: '1rem' }}>
+                        <h3>{area.nombre}</h3>
+                        <CourseList
+                          cursos={cursos.filter((c) => c.areaId === area.id)}
+                          onEdit={(c) => setEditingCurso(c)}
+                          onDelete={onDeleteCurso}
+                          areas={areas}
+                        />
+                      </div>
+                    ))}
+                    {/* unassigned courses */}
+                    {cursos.some((c) => c.areaId == null) && (
+                      <div style={{ marginTop: '1rem' }}>
+                        <h3>Sin área</h3>
+                        <CourseList
+                          cursos={cursos.filter((c) => c.areaId == null)}
+                          onEdit={(c) => setEditingCurso(c)}
+                          onDelete={onDeleteCurso}
+                          areas={areas}
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <CourseList
+                    cursos={cursos}
+                    onEdit={(c) => setEditingCurso(c)}
+                    onDelete={onDeleteCurso}
+                    areas={areas}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                {/* admin: read-only course list */}
+                <h2>Cursos disponibles</h2>
+                <CourseList
+                  cursos={cursos}
+                  areas={areas}
+                  /* no edit/delete */
+                />
+              </>
+            )}
           </>
         )}
 
@@ -107,7 +190,8 @@ export default function AdminApp({
               estudiantes={estudiantes}
               busqueda=""
               onBusquedaChange={() => {}}
-              onEdit={(e) => setEditingStudent(e)}
+              onEdit={isGerente ? (e) => setEditingStudent(e) : undefined}
+              onDelete={isGerente ? onDeleteEstudiante : undefined}
             />
           </>
         )}
@@ -131,13 +215,13 @@ export default function AdminApp({
                     <th>Usuario</th>
                     <th>Curso</th>
                     <th>Estado</th>
-                    <th>Acciones</th>
+                    {isGerente && <th>Acciones</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {pendingSolicitudes.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="table-empty">
+                      <td colSpan={isGerente ? 4 : 3} className="table-empty">
                         No hay solicitudes para mostrar.
                       </td>
                     </tr>
@@ -149,20 +233,22 @@ export default function AdminApp({
                           <td>{sol.usuario}</td>
                           <td>{curso?.nombre ?? 'N/A'}</td>
                           <td>{sol.status}</td>
-                          <td>
-                            <button
-                              type="button"
-                              onClick={() => onUpdateSolicitud(sol.id, 'accepted')}
-                            >
-                              Aceptar
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => onUpdateSolicitud(sol.id, 'rejected')}
-                            >
-                              Rechazar
-                            </button>
-                          </td>
+                          {isGerente && (
+                            <td>
+                              <button
+                                type="button"
+                                onClick={() => onUpdateSolicitud(sol.id, 'accepted')}
+                              >
+                                Aceptar
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => onUpdateSolicitud(sol.id, 'rejected')}
+                              >
+                                Rechazar
+                              </button>
+                            </td>
+                          )}
                         </tr>
                       )
                     })

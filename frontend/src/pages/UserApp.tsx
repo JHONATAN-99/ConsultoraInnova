@@ -22,9 +22,10 @@ export default function UserApp({
   userRole,
   userEmail,
 }: UserAppProps) {
-  const [activeTab, setActiveTab] = useState<'cursos' | 'misSolicitudes'>('cursos')
+  const [activeTab, setActiveTab] = useState<'cursos' | 'misSolicitudes' | 'misCursos'>('cursos')
 
   const myRequests = solicitudes.filter((s) => s.usuario === user.username)
+  const myAccepted = myRequests.filter((r) => r.status === 'accepted')
 
   const handleRequest = (cursoId: number) => {
     // prevent duplicate pending or accepted
@@ -45,6 +46,7 @@ export default function UserApp({
         items={[
           { key: 'cursos', label: 'Cursos' },
           { key: 'misSolicitudes', label: 'Mis solicitudes' },
+          { key: 'misCursos', label: 'Mis cursos' },
         ]}
         activeKey={activeTab}
         onSelect={(k) => setActiveTab(k as any)}
@@ -134,6 +136,50 @@ export default function UserApp({
                         <tr key={r.id}>
                           <td>{curso?.nombre ?? 'N/A'}</td>
                           <td>{r.status}</td>
+                        </tr>
+                      )
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {activeTab === 'misCursos' && (
+          <section className="panel">
+            <div className="panel-header">
+              <div>
+                <h2>Mis cursos</h2>
+                <p className="panel-subtitle">Cursos en los que ya estás inscrito</p>
+              </div>
+            </div>
+            <div className="table-wrapper">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Duración</th>
+                    <th>Descripción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {myAccepted.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="table-empty">
+                        No estás inscrito en ningún curso.
+                      </td>
+                    </tr>
+                  ) : (
+                    myAccepted.map((r) => {
+                      const curso = cursos.find((c) => c.id === r.cursoId)
+                      return (
+                        <tr key={r.id}>
+                          <td>{curso?.nombre ?? 'N/A'}</td>
+                          <td>{curso?.precio.toFixed(2) ?? ''}</td>
+                          <td>{curso?.duracionSemanas ?? '-'}</td>
+                          <td>{curso?.descripcion}</td>
                         </tr>
                       )
                     })

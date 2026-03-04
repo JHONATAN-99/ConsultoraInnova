@@ -4,4 +4,5 @@ export type Curso = {
   descripcion: string
   precio: number
   duracionSemanas?: number
+  areaId?: number
 }

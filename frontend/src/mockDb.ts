@@ -4,6 +4,7 @@ export type Curso = {
   descripcion: string
   precio: number
   duracionSemanas?: number
+  areaId?: number
 }
 
 export type Estudiante = {
@@ -20,6 +21,11 @@ export type Solicitud = {
   cursoId: number
   usuario: string
   status: 'pending' | 'accepted' | 'rejected'
+}
+
+export type Area = {
+  id: number
+  nombre: string
 }
 
 

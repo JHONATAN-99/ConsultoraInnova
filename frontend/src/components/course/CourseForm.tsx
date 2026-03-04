@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
+import type { Area } from '../../mockDb'
 
 type CourseFormProps = {
   onSubmit: (payload: {
@@ -7,23 +8,27 @@ type CourseFormProps = {
     descripcion: string
     precio: number
     duracionSemanas: number
+    areaId?: number
   }) => void
+  areas?: Area[]
   initialData?: {
     id: number
     nombre: string
     descripcion: string
     precio: number
     duracionSemanas?: number
+    areaId?: number
   }
   onCancel?: () => void
 }
 
-export function CourseForm({ onSubmit, initialData, onCancel }: CourseFormProps) {
+export function CourseForm({ onSubmit, initialData, onCancel, areas }: CourseFormProps) {
   const [form, setForm] = useState({
     nombre: initialData?.nombre ?? '',
     descripcion: initialData?.descripcion ?? '',
     precio: initialData?.precio.toString() ?? '',
     duracionSemanas: initialData?.duracionSemanas?.toString() ?? '',
+    areaId: initialData?.areaId ?? undefined,
   })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -50,6 +55,7 @@ export function CourseForm({ onSubmit, initialData, onCancel }: CourseFormProps)
       descripcion: form.descripcion.trim(),
       precio: precioNumber,
       duracionSemanas: duracionNumber,
+      areaId: form.areaId,
     })
 
     setForm({
@@ -57,6 +63,7 @@ export function CourseForm({ onSubmit, initialData, onCancel }: CourseFormProps)
       descripcion: '',
       precio: '',
       duracionSemanas: '',
+      areaId: undefined,
     })
     if (onCancel) onCancel()
   }
@@ -110,6 +117,30 @@ export function CourseForm({ onSubmit, initialData, onCancel }: CourseFormProps)
             />
           </div>
         </div>
+
+        {areas && areas.length > 0 && (
+          <div className="form-field">
+            <label htmlFor="area">Área</label>
+            <select
+              id="area"
+              name="areaId"
+              value={form.areaId ?? ''}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  areaId: e.target.value ? Number(e.target.value) : undefined,
+                }))
+              }
+            >
+              <option value="">-- ninguna --</option>
+              {areas.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="form-field">
           <label htmlFor="descripcionCurso">Descripción</label>

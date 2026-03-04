@@ -4,7 +4,7 @@ import * as authService from './authService'
 type User = {
   id: string
   email: string
-  role: 'admin' | 'user'
+  role: 'admin' | 'user' | 'gerente'
 }
 
 type AuthContextType = {

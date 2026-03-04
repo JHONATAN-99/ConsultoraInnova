@@ -1,11 +1,13 @@
-import type { Curso } from '../../mockDb'
+import type { Curso, Area } from '../../mockDb'
 
 type CourseListProps = {
   cursos: Curso[]
+  areas?: Area[]
   onEdit?: (curso: Curso) => void
+  onDelete?: (curso: Curso) => void
 }
 
-export function CourseList({ cursos, onEdit }: CourseListProps) {
+export function CourseList({ cursos, areas, onEdit, onDelete }: CourseListProps) {
   return (
     <section className="panel">
       <div className="panel-header">
@@ -27,6 +29,7 @@ export function CourseList({ cursos, onEdit }: CourseListProps) {
               <th>Precio</th>
               <th>Duración (semanas)</th>
               <th>Descripción</th>
+              <th>Área</th>
               {onEdit && <th>Acciones</th>}
             </tr>
           </thead>
@@ -44,11 +47,23 @@ export function CourseList({ cursos, onEdit }: CourseListProps) {
                   <td>{curso.precio.toFixed(2)}</td>
                   <td>{'duracionSemanas' in curso ? (curso as any).duracionSemanas : '-'}</td>
                   <td>{curso.descripcion}</td>
+                  <td>
+                    {areas?.find((a) => a.id === curso.areaId)?.nombre ?? '—'}
+                  </td>
                   {onEdit && (
                     <td>
                       <button type="button" onClick={() => onEdit(curso)}>
                         Editar
                       </button>
+                      {onDelete && (
+                        <button
+                          type="button"
+                          style={{ marginLeft: '0.5rem' }}
+                          onClick={() => onDelete(curso)}
+                        >
+                          Eliminar
+                        </button>
+                      )}
                     </td>
                   )}
                 </tr>

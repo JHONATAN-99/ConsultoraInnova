@@ -4,22 +4,30 @@ import bcrypt from 'bcrypt'
 async function main() {
   console.log('Seeding database...')
 
+  // create some areas first
+  const webArea = await prisma.area.create({ data: { nombre: 'Desarrollo web' } })
+  const dataArea = await prisma.area.create({ data: { nombre: 'Data Science' } })
+  const securityArea = await prisma.area.create({ data: { nombre: 'Ciberseguridad' } })
+
   await prisma.curso.createMany({
     data: [
       {
         nombre: 'Desarrollo Web con React',
         descripcion: 'Fundamentos de React, hooks y ecosistema moderno.',
         precio: 500,
+        areaId: webArea.id,
       },
       {
         nombre: 'Python para Data Science',
         descripcion: 'Análisis de datos, NumPy, Pandas y visualización.',
         precio: 650,
+        areaId: dataArea.id,
       },
       {
         nombre: 'Introducción a Ciberseguridad',
         descripcion: 'Conceptos básicos de seguridad informática y buenas prácticas.',
         precio: 550,
+        areaId: securityArea.id,
       },
     ],
   })
@@ -32,6 +40,7 @@ async function main() {
     data: [
       { email: 'admin@demo.com', password: adminHash, role: 'admin' },
       { email: 'user@demo.com', password: userHash, role: 'user' },
+      { email: 'gerente@demo.com', password: adminHash, role: 'gerente' },
     ],
   })
 

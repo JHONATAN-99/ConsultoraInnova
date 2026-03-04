@@ -22,3 +22,9 @@ export async function updateEstudiante(req: Request, res: Response) {
   })
   res.json(updated)
 }
+
+export async function deleteEstudiante(req: Request, res: Response) {
+  const id = Number(req.params.id)
+  await prisma.estudiante.delete({ where: { id } })
+  res.status(204).send()
+}

@@ -13,6 +13,9 @@ model Curso {
   descripcion    String
   precio         Float
   duracionSemanas Int?
+  // Relación con área
+  areaId         Int?
+  area           Area?       @relation(fields: [areaId], references: [id])
   estudiantes    Estudiante[]
   solicitudes     Solicitud[]
 }
@@ -36,10 +39,23 @@ model Solicitud {
   curso    Curso  @relation(fields: [cursoId], references: [id])
 }
 
+// nuevas áreas para agrupar cursos
+model Area {
+  id      Int     @id @default(autoincrement())
+  nombre  String  @unique
+  cursos  Curso[]
+}
+
+enum Role {
+  admin
+  user
+  gerente
+}
+
 model User {
   id       Int    @id @default(autoincrement())
   email    String @unique
   password String
-  role     String
+  role     Role
 }
 

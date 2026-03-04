@@ -22,3 +22,9 @@ export async function updateSolicitud(req: Request, res: Response) {
   })
   res.json(updated)
 }
+
+export async function deleteSolicitud(req: Request, res: Response) {
+  const id = Number(req.params.id)
+  await prisma.solicitud.delete({ where: { id } })
+  res.status(204).send()
+}

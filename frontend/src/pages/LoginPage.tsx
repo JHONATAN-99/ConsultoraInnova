@@ -1,13 +1,13 @@
 import { useState, type FormEvent } from 'react'
 
 type LoginPageProps = {
-  onLoginSuccess: (role: 'admin' | 'user', email: string) => void
+  onLoginSuccess: (role: 'admin' | 'user' | 'gerente', email: string) => void
 }
 
 type AuthResponse = {
   id: number
   email: string
-  role: 'admin' | 'user'
+  role: 'admin' | 'user' | 'gerente'
 }
 
 export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
@@ -15,7 +15,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
-  const [role, setRole] = useState<'admin' | 'user'>('user')
+  const [role, setRole] = useState<'admin' | 'user' | 'gerente'>('user')
   const [error, setError] = useState('')
 
   const setCookie = (name: string, value: string) => {
@@ -142,6 +142,16 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
                 />{' '}
                 Administrador
               </label>
+              <label style={{ marginLeft: '1rem' }}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="gerente"
+                  checked={role === 'gerente'}
+                  onChange={() => setRole('gerente')}
+                />{' '}
+                Gerente
+              </label>
             </div>
           </div>
 
@@ -156,6 +166,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
         <p className="login-hint">
           <strong>Demo:</strong> admin@demo.com / 1234 (administrador) o user@demo.com / 1234 (estudiante)
+          {/* el rol gerente no se crea por demo */}
         </p>
 
         <div className="login-footer">

@@ -3,7 +3,12 @@ import prisma from '../prismaClient'
 import type { Curso } from '../models/Curso'
 
 export async function getCursos(req: Request, res: Response) {
-  const cursos = await prisma.curso.findMany()
+  const { areaId } = req.query
+  const where: any = {}
+  if (areaId) {
+    where.areaId = Number(areaId)
+  }
+  const cursos = await prisma.curso.findMany({ where })
   res.json(cursos)
 }
 
@@ -21,4 +26,10 @@ export async function updateCurso(req: Request, res: Response) {
     data: payload,
   })
   res.json(updated)
+}
+
+export async function deleteCurso(req: Request, res: Response) {
+  const id = Number(req.params.id)
+  await prisma.curso.delete({ where: { id } })
+  res.status(204).send()
 }
