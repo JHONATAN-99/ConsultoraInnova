@@ -41,20 +41,20 @@ function App() {
 
     if (userRole === 'admin' || userRole === 'gerente') {
       fetch('/api/estudiantes')
-        .then((r) => r.json())
+        .then((r) => r.ok ? r.json() : [])
         .then(setEstudiantes)
       fetch('/api/solicitudes')
-        .then((r) => r.json())
+        .then((r) => r.ok ? r.json() : [])
         .then(setSolicitudes)
       fetch('/api/areas')
-        .then((r) => r.json())
+        .then((r) => r.ok ? r.json() : [])
         .then(setAreas)
     } else if (userRole === 'user') {
       // only solicitudes for the individual user are required, but
       // backend doesn't support filtering by email so we'll fetch all
       // and filter client‑side in UserApp
       fetch('/api/solicitudes')
-        .then((r) => r.json())
+        .then((r) => r.ok ? r.json() : [])
         .then(setSolicitudes)
     }
   }, [userRole])
