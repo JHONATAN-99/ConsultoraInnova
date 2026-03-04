@@ -1,0 +1,287 @@
+/* =========================
+   VARIABLES DE MARCA
+========================= */
+:root {
+  --azul-oscuro: #0a1f44;
+  --azul-principal: #1f4fbf;
+  --azul-claro: #3b6edc;
+  --dorado: #f2b705;
+  --dorado-claro: #ffd54f;
+  --gris-claro: #f5f7fa;
+  --gris-texto: #cbd5e1;
+}
+
+/* =========================
+   LAYOUT GENERAL
+========================= */
+.layout {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 240px 1fr;
+  height: 100vh;
+  background: var(--azul-oscuro);
+}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-principal));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.navbar-role {
+  font-size: 0.85rem;
+  color: var(--dorado-claro);
+}
+
+.navbar-logo {
+  height: 60px;
+  width: auto;
+}
+.navbar-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.title-group h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar {
+  background: var(--azul-oscuro);
+  color: var(--gris-texto);
+  padding: 1rem 0.5rem;
+  border-right: 2px solid var(--azul-principal);
+}
+
+.sidebar a {
+  display: block;
+  padding: 0.6rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 0.6rem;
+  transition: all 0.2s ease;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background: var(--azul-principal);
+  color: white;
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+.main-content {
+  padding: 1.5rem;
+  overflow: auto;
+  background: var(--gris-claro);
+}
+
+/* =========================
+   HEADERS
+========================= */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0 0.5rem;
+  border-bottom: 2px solid var(--azul-principal);
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--azul-oscuro);
+}
+
+.app-subtitle {
+  color: var(--azul-principal);
+}
+
+/* =========================
+   BOTÓN LOGOUT
+========================= */
+.logout-button {
+  border-radius: 999px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  background: var(--dorado);
+  border: none;
+  color: var(--azul-oscuro);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background: var(--dorado-claro);
+}
+
+/* =========================
+   TABS
+========================= */
+.tabs-nav {
+  background: var(--azul-oscuro);
+  padding: 0.4rem;
+  border-radius: 999px;
+}
+
+.tab-button {
+  border-radius: 999px;
+  border: none;
+  padding: 0.45rem 1.2rem;
+  background: transparent;
+  color: var(--gris-texto);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button--active {
+  background: var(--dorado);
+  color: var(--azul-oscuro);
+  font-weight: 600;
+}
+
+/* =========================
+   PANEL
+========================= */
+.panel {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border-top: 5px solid var(--azul-principal);
+}
+
+.panel h2 {
+  color: var(--azul-oscuro);
+}
+
+.panel-subtitle {
+  color: var(--azul-principal);
+}
+
+/* =========================
+   FORMULARIOS
+========================= */
+.form-field label {
+  color: var(--azul-principal);
+  font-weight: 500;
+}
+
+.form-field input,
+.form-field select {
+  border-radius: 0.6rem;
+  border: 1px solid var(--azul-principal);
+  padding: 0.6rem 0.8rem;
+  background: white;
+  color: var(--azul-oscuro);
+  transition: all 0.2s ease;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: var(--dorado);
+  box-shadow: 0 0 0 2px rgba(242, 183, 5, 0.3);
+}
+
+/* =========================
+   BOTÓN FORMULARIO
+========================= */
+.form-actions button {
+  border-radius: 999px;
+  padding: 0.6rem 1.6rem;
+  background: linear-gradient(135deg, var(--azul-principal), var(--azul-claro));
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.form-actions button:hover {
+  background: linear-gradient(135deg, var(--azul-claro), var(--azul-principal));
+}
+
+/* =========================
+   TABLAS
+========================= */
+.table-wrapper {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 2px solid var(--azul-principal);
+}
+
+.table thead {
+  background: var(--azul-principal);
+  color: white;
+}
+
+.table th {
+  color: white;
+  font-weight: 600;
+}
+
+.table tbody tr:nth-child(odd) {
+  background: #eef3ff;
+}
+
+.table tbody tr:nth-child(even) {
+  background: white;
+}
+
+.table td {
+  color: var(--azul-oscuro);
+}
+
+/* =========================
+   LOGIN
+========================= */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-principal));
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border-top: 6px solid var(--dorado);
+}
+
+.login-header h1 {
+  color: var(--azul-oscuro);
+}
+
+.login-subtitle {
+  color: var(--azul-principal);
+}
+
+.login-error {
+  color: #dc2626;
+}
+
+.login-hint code {
+  background: #eef3ff;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.4rem;
+}
