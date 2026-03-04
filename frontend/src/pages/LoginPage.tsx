@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 
 type LoginPageProps = {
+  // backend will return the role for the authenticated user
   onLoginSuccess: (role: 'admin' | 'user' | 'gerente', email: string) => void
 }
 
@@ -15,7 +16,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
-  const [role, setRole] = useState<'admin' | 'user' | 'gerente'>('user')
+  // role not chosen by user; registration defaults to normal student
   const [error, setError] = useState('')
 
   const setCookie = (name: string, value: string) => {
@@ -25,7 +26,11 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
   const handleAuth = async (endpoint: '/login' | '/register') => {
     try {
       const body: any = { email, password }
-      if (endpoint === '/register') body.role = role
+      if (endpoint === '/register') {
+        // new registrations are always regular users; admins/gerentes
+        // should be seeded separately
+        body.role = 'user'
+      }
       const res = await fetch(`/api/auth${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -119,41 +124,6 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
             </div>
           )}
 
-          <div className="form-field">
-            <label>Rol</label>
-            <div className="role-options">
-              <label>
-                <input
-                  type="radio"
-                  name="role"
-                  value="user"
-                  checked={role === 'user'}
-                  onChange={() => setRole('user')}
-                />{' '}
-                Estudiante
-              </label>
-              <label style={{ marginLeft: '1rem' }}>
-                <input
-                  type="radio"
-                  name="role"
-                  value="admin"
-                  checked={role === 'admin'}
-                  onChange={() => setRole('admin')}
-                />{' '}
-                Administrador
-              </label>
-              <label style={{ marginLeft: '1rem' }}>
-                <input
-                  type="radio"
-                  name="role"
-                  value="gerente"
-                  checked={role === 'gerente'}
-                  onChange={() => setRole('gerente')}
-                />{' '}
-                Gerente
-              </label>
-            </div>
-          </div>
 
           {error && <p className="login-error">{error}</p>}
 
@@ -166,7 +136,6 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
         <p className="login-hint">
           <strong>Demo:</strong> admin@demo.com / 1234 (administrador) o user@demo.com / 1234 (estudiante)
-          {/* el rol gerente no se crea por demo */}
         </p>
 
         <div className="login-footer">
