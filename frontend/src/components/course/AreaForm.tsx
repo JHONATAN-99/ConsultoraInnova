@@ -1,6 +1,4 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
-import type { Area } from '../../mockDb'
-
 type AreaFormProps = {
   onSubmit: (payload: { nombre: string }) => void
 }

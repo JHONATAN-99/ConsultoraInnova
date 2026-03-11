@@ -4,32 +4,8 @@ import type { User } from '../models/User.ts'
 import bcrypt from 'bcrypt'
 
 export async function register(req: Request, res: Response) {
-  const { email, password, role } = req.body as {
-    email: string
-    password: string
-    role: 'admin' | 'user' | 'gerente'
-  }
-
-  if (!email || !password || !role) {
-    return res.status(400).json({ error: 'email, password and role required' })
-  }
-
-  const exists = await prisma.user.findUnique({ where: { email } })
-  if (exists) {
-    return res.status(409).json({ error: 'user already exists' })
-  }
-
-  // hash password before storing
-  const hashed = await bcrypt.hash(password, 10)
-
-  const nuevo = await prisma.user.create({
-    data: { email, password: hashed, role },
-  })
-
-  // set role and email cookies immediately
-  res.cookie('role', nuevo.role, { httpOnly: false, path: '/' })
-  res.cookie('email', nuevo.email, { httpOnly: false, path: '/' })
-  res.status(201).json({ id: nuevo.id, email: nuevo.email, role: nuevo.role })
+  // Registration is disabled - users must be created by administrators
+  return res.status(403).json({ error: 'register operation not allowed' })
 }
 
 export async function login(req: Request, res: Response) {

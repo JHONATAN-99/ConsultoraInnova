@@ -3,52 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"   // can be changed to "mysql" later if desired
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Curso {
-  id             Int          @id @default(autoincrement())
-  nombre         String
-  descripcion    String
-  precio         Float
-  duracionSemanas Int?
-  // Relación con área
-  areaId         Int?
-  area           Area?       @relation(fields: [areaId], references: [id])
-  estudiantes    Estudiante[]
-  solicitudes     Solicitud[]
-}
-
-model Estudiante {
-  id           Int      @id @default(autoincrement())
-  nombre       String
-  apellido     String
-  email        String
-  cursoId      Int
-  montoInicial Float
-  curso        Curso    @relation(fields: [cursoId], references: [id])
-}
-
-model Solicitud {
-  id       Int    @id @default(autoincrement())
-  cursoId  Int
-  usuario  String
-  status   String
-
-  curso    Curso  @relation(fields: [cursoId], references: [id])
-}
-
-// nuevas áreas para agrupar cursos
-model Area {
-  id      Int     @id @default(autoincrement())
-  nombre  String  @unique
-  cursos  Curso[]
-}
-
 enum Role {
-  admin
-  user
+  administrador
   gerente
 }
 
@@ -59,3 +19,89 @@ model User {
   role     Role
 }
 
+model Estudiante {
+  id           Int    @id @default(autoincrement())
+  ci           String @unique
+  nombres      String
+  apellidos    String
+  prefijo      String?
+  profesion    String?
+  telefono     String?
+  email        String?
+  departamento String?
+
+  inscripciones Inscripcion[]
+}
+
+model Area {
+  id     Int    @id @default(autoincrement())
+  nombre String @unique
+
+  cursos Curso[]
+}
+
+model Curso {
+  id               Int      @id @default(autoincrement())
+  nombre           String
+  precio           Float
+  fechaEmisionCert DateTime?
+
+  areaId           Int
+  area             Area @relation(fields: [areaId], references: [id])
+
+  inscripciones    Inscripcion[]
+}
+
+enum Modalidad {
+  certificado
+  examen
+}
+
+model Inscripcion {
+  id           Int @id @default(autoincrement())
+
+  estudianteId Int
+  cursoId      Int
+
+  modalidad    Modalidad
+  nota         Float?
+
+  montoTotal   Float
+  montoPagado  Float @default(0)
+
+  completado   Boolean @default(false)
+
+  estudiante   Estudiante @relation(fields: [estudianteId], references: [id])
+  curso        Curso @relation(fields: [cursoId], references: [id])
+
+  pagos        Pago[]
+  certificado  Certificado?
+}
+
+enum TipoPago {
+  efectivo
+  transferencia
+}
+
+model Pago {
+  id            Int @id @default(autoincrement())
+
+  inscripcionId Int
+  monto         Float
+  fecha         DateTime @default(now())
+
+  tipoPago      TipoPago
+
+  comprobante   String?
+  recibo        String?
+
+  inscripcion   Inscripcion @relation(fields: [inscripcionId], references: [id])
+}
+
+model Certificado {
+  id            Int @id @default(autoincrement())
+  inscripcionId Int @unique
+  fechaEmision  DateTime
+
+  inscripcion   Inscripcion @relation(fields: [inscripcionId], references: [id])
+}

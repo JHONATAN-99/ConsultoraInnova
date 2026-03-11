@@ -3,7 +3,7 @@ import type { Area, Curso } from '../../mockDb'
 type AreaListProps = {
   areas: Area[]
   cursos: Curso[]
-  onDelete?: (area: Area) => void
+  onDelete?: (id: number) => void
 }
 
 export function AreaList({ areas, cursos, onDelete }: AreaListProps) {
@@ -18,7 +18,7 @@ export function AreaList({ areas, cursos, onDelete }: AreaListProps) {
               <button
                 type="button"
                 style={{ marginLeft: '0.5rem' }}
-                onClick={() => onDelete(area)}
+                onClick={() => onDelete(area.id)}
               >
                 Eliminar área
               </button>

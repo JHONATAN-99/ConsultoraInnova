@@ -18,7 +18,7 @@
   display: grid;
   grid-template-rows: auto 1fr;
   grid-template-columns: 240px 1fr;
-  height: 100vh;
+  min-height: 100vh;
   background: var(--azul-oscuro);
 }
 
@@ -86,7 +86,7 @@
 ========================= */
 .main-content {
   padding: 1.5rem;
-  overflow: auto;
+  overflow-y: auto;
   background: var(--gris-claro);
 }
 
@@ -197,7 +197,84 @@
   border-color: var(--dorado);
   box-shadow: 0 0 0 2px rgba(242, 183, 5, 0.3);
 }
+.student-card {
+  max-width: 750px;
+  margin: 40px auto;
+  padding: 35px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+}
 
+.student-card h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.student-card h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #444;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: #666;
+}
+
+.form-field input,
+.form-field select {
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-bottom: 2px solid #7b61ff;
+}
+
+.form-actions {
+  margin-top: 35px;
+  display: flex;
+  justify-content: center;
+}
+
+.form-actions button {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(90deg,#9b59b6,#5f6df5);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.form-actions button:hover {
+  opacity: 0.9;
+}
 /* =========================
    BOTÓN FORMULARIO
 ========================= */
@@ -284,4 +361,33 @@
   background: #eef3ff;
   padding: 0.2rem 0.4rem;
   border-radius: 0.4rem;
+}
+
+/* =========================
+   PAGOS
+   =========================*/
+.modal-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.modal{
+background:white;
+padding:25px;
+border-radius:10px;
+width:400px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-actions{
+margin-top:20px;
+display:flex;
+justify-content:space-between;
 }

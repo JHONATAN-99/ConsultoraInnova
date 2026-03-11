@@ -1,26 +1,33 @@
-import type { Curso, Estudiante } from '../../mockDb'
+import type { Estudiante } from "../../types/models";
 
 type StudentListProps = {
-  estudiantes: Estudiante[]
-  cursos: Curso[]
-  busqueda: string
-  onBusquedaChange: (value: string) => void
-  onEdit?: (estudiante: Estudiante) => void
-  onDelete?: (estudiante: Estudiante) => void
-}
+  estudiantes: Estudiante[];
+  busqueda: string;
+  onBusquedaChange: (value: string) => void;
+  onEdit?: (estudiante: Estudiante) => void;
+  onDelete?: (id: number) => void;
+};
 
-export function StudentList({ estudiantes, cursos, busqueda, onBusquedaChange, onEdit }: StudentListProps) {
+export function StudentList({
+  estudiantes,
+  busqueda,
+  onBusquedaChange,
+  onEdit,
+  onDelete,
+}: StudentListProps) {
   const estudiantesFiltrados = estudiantes.filter((e) => {
-    if (!busqueda.trim()) return true
-    const texto = busqueda.toLowerCase()
-    const curso = cursos.find((c) => c.id === e.cursoId)
+    if (!busqueda.trim()) return true;
+    const texto = busqueda.toLowerCase();
     return (
-      e.nombre.toLowerCase().includes(texto) ||
-      e.apellido.toLowerCase().includes(texto) ||
-      e.email.toLowerCase().includes(texto) ||
-      curso?.nombre.toLowerCase().includes(texto)
-    )
-  })
+      e.ci.toLowerCase().includes(texto) ||
+      e.nombres.toLowerCase().includes(texto) ||
+      e.apellidos.toLowerCase().includes(texto) ||
+      (e.prefijo ?? "").toLowerCase().includes(texto) ||
+      (e.profesion ?? "").toLowerCase().includes(texto) ||
+      (e.email ?? "").toLowerCase().includes(texto) ||
+      (e.departamento ?? "").toLowerCase().includes(texto)
+    );
+  });
 
   return (
     <section className="panel">
@@ -29,18 +36,18 @@ export function StudentList({ estudiantes, cursos, busqueda, onBusquedaChange, o
           <h2>Lista de estudiantes</h2>
           <p className="panel-subtitle">
             {estudiantes.length === 0
-              ? 'Aún no hay estudiantes registrados.'
-              : `Total: ${estudiantes.length} estudiante${estudiantes.length !== 1 ? 's' : ''}`}
+              ? "Aún no hay estudiantes registrados."
+              : `Total: ${estudiantes.length} estudiante${estudiantes.length !== 1 ? "s" : ""}`}
           </p>
         </div>
         <div className="panel-search">
           <label className="sr-only" htmlFor="busqueda">
-            Buscar estudiante o curso
+            Buscar estudiante
           </label>
           <input
             id="busqueda"
             type="text"
-            placeholder="Buscar por nombre, apellido, email o curso..."
+            placeholder="Buscar por CI, nombres, apellidos, profesión, email..."
             value={busqueda}
             onChange={(e) => onBusquedaChange(e.target.value)}
           />
@@ -51,61 +58,57 @@ export function StudentList({ estudiantes, cursos, busqueda, onBusquedaChange, o
         <table className="table">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
+              <th>CI</th>
+              <th>Prefijo</th>
+              <th>Nombres</th>
+              <th>Apellidos</th>
+              <th>Profesión</th>
+              <th>Teléfono</th>
               <th>Email</th>
-              <th>Curso</th>
-              <th>Precio curso</th>
-              <th>Monto inicial</th>
-              <th>Restante</th>
+              <th>Departamento</th>
               {onEdit && <th>Acciones</th>}
             </tr>
           </thead>
           <tbody>
             {estudiantesFiltrados.length === 0 ? (
               <tr>
-                <td colSpan={onEdit ? 8 : 7} className="table-empty">
+                <td colSpan={onEdit ? 9 : 8} className="table-empty">
                   No hay estudiantes para mostrar.
                 </td>
               </tr>
             ) : (
-              estudiantesFiltrados.map((estudiante) => {
-                const curso = cursos.find((c) => c.id === estudiante.cursoId)
-                const precio = curso?.precio ?? 0
-                const restante = Math.max(precio - estudiante.montoInicial, 0)
-                return (
-                  <tr key={estudiante.id}>
-                    <td>{estudiante.nombre}</td>
-                    <td>{estudiante.apellido}</td>
-                    <td>{estudiante.email}</td>
-                    <td>{curso?.nombre ?? 'Sin curso'}</td>
-                    <td>{precio.toFixed(2)}</td>
-                    <td>{estudiante.montoInicial.toFixed(2)}</td>
-                    <td>{restante.toFixed(2)}</td>
-                    {onEdit && (
-                      <td>
-                        <button type="button" onClick={() => onEdit(estudiante)}>
-                          Editar
+              estudiantesFiltrados.map((estudiante) => (
+                <tr key={estudiante.id}>
+                  <td>{estudiante.ci}</td>
+                  <td>{estudiante.prefijo}</td>
+                  <td>{estudiante.nombres}</td>
+                  <td>{estudiante.apellidos}</td>
+                  <td>{estudiante.profesion}</td>
+                  <td>{estudiante.telefono}</td>
+                  <td>{estudiante.email}</td>
+                  <td>{estudiante.departamento}</td>
+                  {onEdit && (
+                    <td>
+                      <button type="button" onClick={() => onEdit(estudiante)}>
+                        Editar
+                      </button>
+                      {onDelete && (
+                        <button
+                          type="button"
+                          onClick={() => onDelete(estudiante.id)}
+                          style={{ marginLeft: "0.5rem" }}
+                        >
+                          Eliminar
                         </button>
-                        {onDelete && (
-                          <button
-                            type="button"
-                            style={{ marginLeft: '0.5rem' }}
-                            onClick={() => onDelete(estudiante)}
-                          >
-                            Eliminar
-                          </button>
-                        )}
-                      </td>
-                    )}
-                  </tr>
-                )
-              })
+                      )}
+                    </td>
+                  )}
+                </tr>
+              ))
             )}
           </tbody>
         </table>
       </div>
     </section>
-  )
+  );
 }
-

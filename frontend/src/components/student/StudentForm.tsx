@@ -1,110 +1,106 @@
-import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react'
-import type { Curso } from '../../mockDb'
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import type { Estudiante } from "../../types/models";
 
 type StudentFormProps = {
-  cursos: Curso[]
-  onSubmit: (payload: {
-    id?: number
-    nombre: string
-    apellido: string
-    email: string
-    cursoId: number
-    montoInicial: number
-  }) => void
-  initialData?: {
-    id: number
-    nombre: string
-    apellido: string
-    email: string
-    cursoId: number
-    montoInicial: number
-  }
-  onCancel?: () => void
-}
+  onSubmit: (data: Omit<Estudiante, "id"> & { id?: number }) => void;
+  initialData?: Estudiante;
+  onCancel?: () => void;
+};
 
-export function StudentForm({ cursos, onSubmit, initialData, onCancel }: StudentFormProps) {
+export function StudentForm({
+  onSubmit,
+  initialData,
+  onCancel,
+}: StudentFormProps) {
   const [form, setForm] = useState({
-    nombre: initialData?.nombre ?? '',
-    apellido: initialData?.apellido ?? '',
-    email: initialData?.email ?? '',
-    cursoId: initialData?.cursoId.toString() ?? cursos[0]?.id.toString() ?? '',
-    montoInicial: initialData?.montoInicial.toString() ?? '',
-  })
+    ci: initialData?.ci ?? "",
+    nombres: initialData?.nombres ?? "",
+    apellidos: initialData?.apellidos ?? "",
+    prefijo: initialData?.prefijo ?? "",
+    profesion: initialData?.profesion ?? "",
+    telefono: initialData?.telefono ?? "",
+    email: initialData?.email ?? "",
+    departamento: initialData?.departamento ?? "",
+  });
 
-  // if cursos array is populated after mount, update selected cursoId
-  useEffect(() => {
-    if (cursos.length && !form.cursoId) {
-      setForm((prev) => ({ ...prev, cursoId: cursos[0].id.toString() }))
-    }
-  }, [cursos, form.cursoId])
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-  }
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    if (
-      !form.nombre.trim() ||
-      !form.apellido.trim() ||
-      !form.email.trim() ||
-      !form.cursoId ||
-      !form.montoInicial
-    ) {
-      return
-    }
+    e.preventDefault();
 
-    const montoInicialNumber = Number(form.montoInicial)
-    if (Number.isNaN(montoInicialNumber) || montoInicialNumber < 0) {
-      return
+    if (
+      !form.ci.trim() ||
+      !form.nombres.trim() ||
+      !form.apellidos.trim() ||
+      !form.prefijo.trim() ||
+      !form.profesion.trim() ||
+      !form.telefono.trim() ||
+      !form.email.trim() ||
+      !form.departamento.trim()
+    ) {
+      return;
     }
 
     onSubmit({
       id: initialData?.id,
-      nombre: form.nombre.trim(),
-      apellido: form.apellido.trim(),
+      ci: form.ci.trim(),
+      nombres: form.nombres.trim(),
+      apellidos: form.apellidos.trim(),
+      prefijo: form.prefijo.trim(),
+      profesion: form.profesion.trim(),
+      telefono: form.telefono.trim(),
       email: form.email.trim(),
-      cursoId: Number(form.cursoId),
-      montoInicial: montoInicialNumber,
-    })
+      departamento: form.departamento.trim(),
+    });
 
     setForm({
-      nombre: '',
-      apellido: '',
-      email: '',
-      cursoId: cursos[0]?.id.toString() ?? '',
-      montoInicial: '',
-    })
-    if (onCancel) onCancel()
-  }
+      ci: "",
+      nombres: "",
+      apellidos: "",
+      prefijo: "",
+      profesion: "",
+      telefono: "",
+      email: "",
+      departamento: "",
+    });
+
+    if (onCancel) onCancel();
+  };
 
   return (
-    <section className="panel">
-      <h2>{initialData ? 'Editar estudiante' : 'Registrar estudiante'}</h2>
+    <section className="student-card">
+      <h2>{initialData ? "Editar estudiante" : "Registrar estudiante"}</h2>
       <form className="form" onSubmit={handleSubmit}>
+        <h3>Datos personales</h3>
+
         <div className="form-row">
           <div className="form-field">
-            <label htmlFor="nombre">Nombre</label>
+            <label htmlFor="ci">CI</label>
             <input
-              id="nombre"
-              name="nombre"
+              id="ci"
+              name="ci"
               type="text"
-              value={form.nombre}
+              value={form.ci}
               onChange={handleChange}
-              placeholder="Nombre del estudiante"
+              placeholder="Número de cédula de identidad"
               required
             />
           </div>
+
           <div className="form-field">
-            <label htmlFor="apellido">Apellido</label>
+            <label htmlFor="prefijo">Prefijo</label>
             <input
-              id="apellido"
-              name="apellido"
+              id="prefijo"
+              name="prefijo"
               type="text"
-              value={form.apellido}
+              value={form.prefijo}
               onChange={handleChange}
-              placeholder="Apellido del estudiante"
+              placeholder="Ej: Ing., Lic., Dr."
               required
             />
           </div>
@@ -112,36 +108,63 @@ export function StudentForm({ cursos, onSubmit, initialData, onCancel }: Student
 
         <div className="form-row">
           <div className="form-field">
-            <label htmlFor="montoInicial">Monto inicial (efectivo)</label>
+            <label htmlFor="nombres">Nombres</label>
             <input
-              id="montoInicial"
-              name="montoInicial"
-              type="number"
-              min={0}
-              step="0.01"
-              value={form.montoInicial}
+              id="nombres"
+              name="nombres"
+              type="text"
+              value={form.nombres}
               onChange={handleChange}
-              placeholder="Ej: 200"
+              placeholder="Nombres del estudiante"
               required
             />
           </div>
+
           <div className="form-field">
-            <label>Precio del curso seleccionado</label>
+            <label htmlFor="apellidos">Apellidos</label>
             <input
+              id="apellidos"
+              name="apellidos"
               type="text"
-              readOnly
-              value={
-                cursos.find((c) => c.id === Number(form.cursoId))
-                  ? `$ ${
-                      cursos.find((c) => c.id === Number(form.cursoId))!.precio.toFixed(2)
-                    }`
-                  : ''
-              }
+              value={form.apellidos}
+              onChange={handleChange}
+              placeholder="Apellidos del estudiante"
+              required
             />
           </div>
         </div>
 
         <div className="form-row">
+          <div className="form-field">
+            <label htmlFor="profesion">Profesión</label>
+            <input
+              id="profesion"
+              name="profesion"
+              type="text"
+              value={form.profesion}
+              onChange={handleChange}
+              placeholder="Profesión del estudiante"
+              required
+            />
+          </div>
+        </div>
+
+        <h3 style={{ marginTop: "1.5rem" }}>Datos de contacto</h3>
+
+        <div className="form-row">
+          <div className="form-field">
+            <label htmlFor="telefono">Teléfono</label>
+            <input
+              id="telefono"
+              name="telefono"
+              type="tel"
+              value={form.telefono}
+              onChange={handleChange}
+              placeholder="Número de teléfono"
+              required
+            />
+          </div>
+
           <div className="form-field">
             <label htmlFor="email">Email</label>
             <input
@@ -154,36 +177,45 @@ export function StudentForm({ cursos, onSubmit, initialData, onCancel }: Student
               required
             />
           </div>
+
           <div className="form-field">
-            <label htmlFor="cursoId">Curso</label>
+            <label htmlFor="departamento">Departamento</label>
             <select
-              id="cursoId"
-              name="cursoId"
-              value={form.cursoId}
+              id="departamento"
+              name="departamento"
+              value={form.departamento}
               onChange={handleChange}
               required
             >
-              {cursos.map((curso) => (
-                <option key={curso.id} value={curso.id}>
-                  {curso.nombre}
-                </option>
-              ))}
+              <option value="">Seleccionar departamento</option>
+              <option value="Cochabamba">Cochabamba</option>
+              <option value="La Paz">La Paz</option>
+              <option value="Santa Cruz">Santa Cruz</option>
+              <option value="Oruro">Oruro</option>
+              <option value="Potosí">Potosí</option>
+              <option value="Chuquisaca">Chuquisaca</option>
+              <option value="Tarija">Tarija</option>
+              <option value="Beni">Beni</option>
+              <option value="Pando">Pando</option>
             </select>
           </div>
         </div>
-
         <div className="form-actions">
           <button type="submit">
-            {initialData ? 'Actualizar estudiante' : 'Guardar estudiante'}
+            {initialData ? "Actualizar estudiante" : "Guardar estudiante"}
           </button>
+
           {initialData && onCancel && (
-            <button type="button" onClick={onCancel} style={{ marginLeft: '0.5rem' }}>
+            <button
+              type="button"
+              onClick={onCancel}
+              style={{ marginLeft: "10px" }}
+            >
               Cancelar
             </button>
           )}
         </div>
       </form>
     </section>
-  )
+  );
 }
-

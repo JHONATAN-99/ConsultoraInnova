@@ -1,13 +1,18 @@
-import type { Curso, Area } from '../../mockDb'
+import type { Curso, Area } from '../../types/models'
 
 type CourseListProps = {
   cursos: Curso[]
-  areas?: Area[]
+  areas: Area[]
   onEdit?: (curso: Curso) => void
-  onDelete?: (curso: Curso) => void
+  onDelete?: (id: number) => void
 }
 
 export function CourseList({ cursos, areas, onEdit, onDelete }: CourseListProps) {
+  const getAreaName = (areaId: number) => {
+    const area = areas.find(a => a.id === areaId)
+    return area?.nombre ?? 'Sin área'
+  }
+
   return (
     <section className="panel">
       <div className="panel-header">
@@ -26,9 +31,6 @@ export function CourseList({ cursos, areas, onEdit, onDelete }: CourseListProps)
           <thead>
             <tr>
               <th>Nombre</th>
-              <th>Precio</th>
-              <th>Duración (semanas)</th>
-              <th>Descripción</th>
               <th>Área</th>
               {onEdit && <th>Acciones</th>}
             </tr>
@@ -36,7 +38,7 @@ export function CourseList({ cursos, areas, onEdit, onDelete }: CourseListProps)
           <tbody>
             {cursos.length === 0 ? (
               <tr>
-                <td colSpan={4} className="table-empty">
+                <td colSpan={onEdit ? 3 : 2} className="table-empty">
                   No hay cursos para mostrar.
                 </td>
               </tr>
@@ -44,12 +46,7 @@ export function CourseList({ cursos, areas, onEdit, onDelete }: CourseListProps)
               cursos.map((curso) => (
                 <tr key={curso.id}>
                   <td>{curso.nombre}</td>
-                  <td>{curso.precio.toFixed(2)}</td>
-                  <td>{'duracionSemanas' in curso ? (curso as any).duracionSemanas : '-'}</td>
-                  <td>{curso.descripcion}</td>
-                  <td>
-                    {areas?.find((a) => a.id === curso.areaId)?.nombre ?? '—'}
-                  </td>
+                  <td>{getAreaName(curso.areaId)}</td>
                   {onEdit && (
                     <td>
                       <button type="button" onClick={() => onEdit(curso)}>
@@ -58,8 +55,8 @@ export function CourseList({ cursos, areas, onEdit, onDelete }: CourseListProps)
                       {onDelete && (
                         <button
                           type="button"
+                          onClick={() => onDelete(curso.id)}
                           style={{ marginLeft: '0.5rem' }}
-                          onClick={() => onDelete(curso)}
                         >
                           Eliminar
                         </button>
