@@ -2,14 +2,15 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import LoginPage from "./pages/LoginPage";
 import AdminApp from "./pages/AdminApp.tsx";
-import ConsultaEstudiante from "./pages/ConsultaEstudiante.tsx";
+import Consulta from "./pages/Consulta.tsx";
+import InfoEstudiante from "./pages/InfoEstudiante.tsx";
+
 import type {
   Curso,
   Estudiante,
   Inscripcion,
   Pago,
   Area,
-  Certificado,
 } from "./types/models";
 
 export type Role = "administrador" | "gerente";
@@ -17,6 +18,7 @@ export type Role = "administrador" | "gerente";
 function App() {
   const [userRole, setUserRole] = useState<Role | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const path = window.location.pathname;
 
   const getCookie = (name: string): string | null => {
     const match = document.cookie.match(
@@ -29,7 +31,6 @@ function App() {
   const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
   const [pagos, setPagos] = useState<Pago[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
-  const [certificados, setCertificados] = useState<Certificado[]>([]);
 
   // load initial data from backend and check auth cookie
   useEffect(() => {
@@ -244,6 +245,15 @@ function App() {
     }
   };
 
+  if (path === "/consulta") {
+    return <Consulta/>;
+  }
+
+  if (path.startsWith("/estudiante/")) {
+  return <InfoEstudiante onConsulta={handleConsultaEstudiante} />;
+}
+
+
   if (!userRole) {
     return (
       <LoginPage
@@ -288,7 +298,8 @@ function App() {
   }
 
   // Public consultation page for students
-  return <ConsultaEstudiante onConsulta={handleConsultaEstudiante} />;
+  // return <ConsultaEstudiante onConsulta={handleConsultaEstudiante} />;
+  return null;
 }
 
 export default App;
